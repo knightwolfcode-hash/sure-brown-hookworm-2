@@ -1,0 +1,804 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #000000; 
+    font-family: Arial, Helvetica, sans-serif;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh; /* Dynamic Viewport Height: prevents mobile browser bars from pushing controls off-screen */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: none;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#game-container canvas {
+    touch-action: none;
+}
+
+
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#hud button,
+#hud a,
+#hud input,
+#hud [role="button"],
+#hud .interactive {
+    pointer-events: auto;
+}
+
+.spritePosition {
+    margin: 10px 0 0 10px;
+    font-size: 0.8em;
+}
+
+.button {
+    width: 140px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #000000;
+    color: rgba(255, 255, 255, 0.87);
+    border: 1px solid rgba(255, 255, 255, 0.87);
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+        border: 1px solid #0ec3c9;
+        color: #0ec3c9;
+    }
+
+    &:active {
+        background-color: #0ec3c9;
+    }
+
+    /* Disabled styles */
+    &:disabled {
+        cursor: not-allowed;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* ===========================================================================
+   AFRICAN FOLKLORE ANTHOLOGY — GAME UI THEME
+   =========================================================================== */
+
+:root {
+    --obsidian: rgba(18, 14, 24, 0.92);
+    --obsidian-solid: #120e18;
+    --gold: #f59f00;
+    --gold-bright: #ffd43b;
+    --gold-pale: #fff3bf;
+    --ember: #e67e22;
+    --fire: #ff7b1c;
+    --amber: #ffaa33;
+    --cyan: #74c0fc;
+    --danger: #ff6b6b;
+    --ok: #38d9a9;
+}
+
+/* ---------------------------------------------------------------------------
+   1. Global Navigation Pill Bar
+   --------------------------------------------------------------------------- */
+.global-nav {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: var(--obsidian);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    box-shadow: 0 0 18px rgba(245, 159, 0, 0.25), 0 4px 14px rgba(0, 0, 0, 0.6);
+    pointer-events: auto;
+    z-index: 40;
+    max-width: 96vw;
+}
+
+.nav-group {
+    display: flex;
+    gap: 6px;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    min-height: 40px;
+    background: transparent;
+    border: 1px solid rgba(245, 159, 0, 0.35);
+    border-radius: 999px;
+    color: var(--gold-pale);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.nav-btn:hover {
+    border-color: var(--gold-bright);
+    background: rgba(245, 159, 0, 0.12);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, rgba(255, 123, 28, 0.35), rgba(245, 159, 0, 0.25));
+    border-color: var(--fire);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 123, 28, 0.5);
+}
+
+.nav-btn.completed {
+    border-color: var(--ok);
+}
+
+.nav-btn .icon {
+    font-size: 16px;
+}
+
+.nav-btn .badge {
+    color: var(--ok);
+    font-weight: 900;
+}
+
+.nav-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(245, 159, 0, 0.4);
+    color: var(--gold-pale);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background: rgba(245, 159, 0, 0.15);
+    border-color: var(--gold-bright);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Shared HUD card styling
+   --------------------------------------------------------------------------- */
+.hud-card {
+    background: var(--obsidian);
+    border: 1px solid rgba(245, 159, 0, 0.45);
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.hud-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 5px;
+}
+
+.hud-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: var(--amber);
+}
+
+.hud-val {
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-val.beast-stunned {
+    color: var(--cyan);
+    text-shadow: 0 0 8px rgba(116, 192, 252, 0.8);
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fire), var(--gold-bright));
+    border-radius: 999px;
+    transition: width 0.25s linear;
+}
+
+.progress-bar-fill.danger {
+    background: linear-gradient(90deg, #c92a2a, var(--danger));
+}
+
+/* ---------------------------------------------------------------------------
+   3. Tale 1 — Runner HUD
+   --------------------------------------------------------------------------- */
+.runner-hud {
+    position: absolute;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.runner-hud .distance-card {
+    width: min(320px, 42vw);
+}
+
+.runner-hud .beast-card {
+    width: min(320px, 42vw);
+}
+
+.beast-bar .progress-bar-fill {
+    background: linear-gradient(90deg, var(--danger), var(--amber));
+}
+
+.hud-stats-group {
+    display: flex;
+    gap: 8px;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.snares-icons,
+.hearts-icons {
+    display: flex;
+    gap: 3px;
+    font-size: 15px;
+}
+
+.snare-dot.empty,
+.heart.lost {
+    opacity: 0.22;
+    filter: grayscale(1);
+}
+
+/* ---------------------------------------------------------------------------
+   4. Tale 2 — Arena HUD
+   --------------------------------------------------------------------------- */
+.arena-hud {
+    position: absolute;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.arena-hud .boss-card {
+    width: min(340px, 46vw);
+}
+
+.arena-hud .player-arena-card {
+    width: min(340px, 46vw);
+}
+
+.boss-hp-segments {
+    display: flex;
+    gap: 5px;
+}
+
+.boss-hp-pip {
+    flex: 1;
+    height: 10px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--cyan), #4dabf7);
+    box-shadow: 0 0 6px rgba(116, 192, 252, 0.7);
+}
+
+.boss-hp-pip.lost {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+}
+
+.net-cooldown-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    margin-top: 6px;
+}
+
+.cooldown-track {
+    flex: 1;
+    height: 7px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.cooldown-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fire), var(--gold-bright));
+    border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Touch controls — ONLY on touch devices (hidden on desktop)
+   --------------------------------------------------------------------------- */
+.touch-controls {
+    display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .touch-controls {
+        display: flex;
+        position: absolute;
+        bottom: 18px;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        padding: 0 18px;
+        gap: 14px;
+        pointer-events: none;
+        z-index: 30;
+    }
+
+    .touch-btn {
+        pointer-events: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-width: 84px;
+        min-height: 84px;
+        border-radius: 50%;
+        background: var(--obsidian);
+        border: 2px solid var(--gold);
+        color: var(--gold-pale);
+        font-size: 26px;
+        box-shadow: 0 0 14px rgba(245, 159, 0, 0.35);
+        cursor: pointer;
+    }
+
+    .touch-btn:active {
+        background: rgba(255, 123, 28, 0.35);
+        transform: scale(0.94);
+    }
+
+    .touch-btn label {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        pointer-events: none;
+    }
+
+    .runner-touch .snare-action-btn {
+        order: 1;
+    }
+
+    .runner-touch .jump-action-btn {
+        order: 2;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   6. Tale 3 — Anansi's Riddles Overlay
+   --------------------------------------------------------------------------- */
+.riddles-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 70px 16px 22px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.riddle-nodes-bar {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.riddle-node {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    background: var(--obsidian);
+    border: 2px solid rgba(245, 159, 0, 0.4);
+    color: rgba(255, 243, 191, 0.5);
+}
+
+.riddle-node.current {
+    border-color: var(--gold-bright);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255, 212, 59, 0.7);
+}
+
+.riddle-node.done {
+    border-color: var(--ok);
+    color: var(--ok);
+}
+
+.riddle-card {
+    pointer-events: auto;
+    width: min(620px, 94vw);
+    background: var(--obsidian);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 18px 22px;
+    box-shadow: 0 0 26px rgba(245, 159, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.65);
+    text-align: center;
+}
+
+.riddle-header {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--amber);
+}
+
+.riddle-question {
+    margin: 8px 0 14px;
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--gold-pale);
+}
+
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.option-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(245, 159, 0, 0.4);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+}
+
+.option-btn:hover {
+    background: rgba(245, 159, 0, 0.18);
+    border-color: var(--gold-bright);
+    transform: translateX(3px);
+}
+
+.option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--obsidian-solid);
+    font-weight: 900;
+}
+
+.anansi-speech {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border-left: 4px solid var(--gold);
+    text-align: left;
+}
+
+.anansi-speech.correct {
+    border-left-color: var(--ok);
+}
+
+.anansi-speech.wrong {
+    border-left-color: var(--danger);
+}
+
+.spider-avatar {
+    font-size: 24px;
+}
+
+.speech-text {
+    margin: 0;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--gold-pale);
+}
+
+/* ---------------------------------------------------------------------------
+   7. Elder Dialogue Overlay (Hearth)
+   --------------------------------------------------------------------------- */
+.dialogue-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 16px 20px;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+    z-index: 30;
+}
+
+.dialogue-box {
+    width: min(680px, 96vw);
+    background: var(--obsidian);
+    border: 2px solid var(--ember);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 0 30px rgba(230, 126, 34, 0.4), 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.elder-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.elder-avatar-badge {
+    font-size: 34px;
+}
+
+.elder-name {
+    margin: 0;
+    font-size: 17px;
+    color: var(--gold-bright);
+}
+
+.elder-tale-title {
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--amber);
+    text-transform: uppercase;
+}
+
+.dialogue-text {
+    margin: 6px 0 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dialogue-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.dialogue-btn {
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gold);
+}
+
+.dialogue-btn.primary {
+    background: linear-gradient(135deg, var(--fire), var(--gold));
+    border-color: var(--gold-bright);
+    color: var(--obsidian-solid);
+    box-shadow: 0 0 14px rgba(255, 123, 28, 0.5);
+}
+
+.dialogue-btn.primary:hover {
+    filter: brightness(1.15);
+}
+
+.dialogue-btn.secondary {
+    background: transparent;
+    color: var(--gold-pale);
+}
+
+.dialogue-btn.secondary:hover {
+    background: rgba(245, 159, 0, 0.15);
+}
+
+/* ---------------------------------------------------------------------------
+   8. Modals — Pause / Victory / Defeat (ALWAYS full-screen & on top)
+   --------------------------------------------------------------------------- */
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 4, 10, 0.82);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    pointer-events: auto;
+    z-index: 100; /* above nav (40), dialogue (30), HUDs (20) */
+}
+
+.modal-content {
+    width: min(480px, 92vw);
+    background: var(--obsidian-solid);
+    border: 2px solid var(--gold);
+    border-radius: 18px;
+    padding: 26px 30px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(245, 159, 0, 0.35), 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+
+.modal-badge-icon {
+    font-size: 44px;
+    margin-bottom: 6px;
+}
+
+.modal-title {
+    margin: 0 0 6px;
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 16px rgba(255, 212, 59, 0.5);
+}
+
+.modal-subtitle {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: var(--amber);
+}
+
+.modal-desc,
+.modal-lore {
+    margin: 8px 0 18px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.victory-modal {
+    border-color: var(--ok);
+    box-shadow: 0 0 40px rgba(56, 217, 169, 0.35), 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+
+.defeat-modal {
+    border-color: var(--danger);
+    box-shadow: 0 0 40px rgba(255, 107, 107, 0.3), 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-btn {
+    min-height: 48px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gold);
+}
+
+.modal-btn.primary {
+    background: linear-gradient(135deg, var(--fire), var(--gold));
+    border-color: var(--gold-bright);
+    color: var(--obsidian-solid);
+    box-shadow: 0 0 14px rgba(255, 123, 28, 0.45);
+}
+
+.modal-btn.primary:hover {
+    filter: brightness(1.15);
+}
+
+.modal-btn.secondary {
+    background: rgba(245, 159, 0, 0.12);
+    color: var(--gold-pale);
+}
+
+.modal-btn.secondary:hover {
+    background: rgba(245, 159, 0, 0.25);
+}
+
+.modal-btn.tertiary {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-btn.tertiary:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   9. Small-screen adjustments
+   --------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+    .nav-btn .btn-label {
+        display: none;
+    }
+
+    .nav-btn {
+        padding: 8px 10px;
+    }
+
+    .global-nav {
+        gap: 6px;
+        padding: 6px 10px;
+    }
+
+    .riddle-question {
+        font-size: 15px;
+    }
+}
